@@ -5,6 +5,9 @@ let sequelize = new Sequelize.Sequelize({
   dialect: "mysql",
   database: "newbee_smart_album",
   username: "root",
-  password: "chenliang"
+  password: "chenliang",
+  define:{
+    timestamps: false,
+  }
 })
 export default sequelize;

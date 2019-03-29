@@ -9,7 +9,10 @@ let sequelize = new sequelize_1.default.Sequelize({
     dialect: "mysql",
     database: "newbee_smart_album",
     username: "root",
-    password: "chenliang"
+    password: "chenliang",
+    define: {
+        timestamps: false,
+    }
 });
 exports.default = sequelize;
 //# sourceMappingURL=sequelizeGenerator.js.map
