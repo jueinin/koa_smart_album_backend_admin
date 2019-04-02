@@ -5,7 +5,7 @@ let sequelize = new Sequelize.Sequelize({
   dialect: "mysql",
   database: "newbee_smart_album",
   username: "root",
-  password: "chenliang",
+  password: "GYf51610532",
   define:{
     timestamps: false,
   }

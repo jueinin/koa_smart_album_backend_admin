@@ -61,7 +61,7 @@ route.get("/getInfo", async (ctx, next) => {   //图片总数量   //按照时�
   });
   //假设总容量30GB
   let remainSpace;//= 32212254720;
-  remainSpace =await checkSpace('C:').then((diskSpace) => {
+  remainSpace =await checkSpace('/').then((diskSpace) => {
     return diskSpace.free;
   });
   let result:GetInfo={
