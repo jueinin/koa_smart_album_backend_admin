@@ -13,8 +13,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const koa_router_1 = __importDefault(require("koa-router"));
 const sequelizeGenerator_1 = __importDefault(require("../tools/sequelizeGenerator"));
 const dbtables = __importStar(require("../entities/db.tables"));
+;
 const js_md5_1 = __importDefault(require("js-md5"));
 const sequelize_1 = require("sequelize");
+const checkSpace = require("check-disk-space");
 let route = new koa_router_1.default({
     prefix: "/backendApi"
 });
@@ -50,24 +52,24 @@ route.post('/login', async (ctx, next) => {
     }
 });
 route.get("/getInfo", async (ctx, next) => {
+    console.log(ctx.session);
     let picAmount = await tables.photo.count();
     let userAmount = await tables.user.count();
     //在线人数需要接口
-    //let res = await Axios.get('');//请求
     //分类先不搞了
     let usedSpace = await sequelizeGenerator_1.default.query("select sum(size) as count from photo", {
         raw: true,
         type: sequelize_1.Sequelize.QueryTypes.SELECT
     });
-    console.log(usedSpace);
     //假设总容量30GB
-    let remainSpace = 32212254720;
+    let remainSpace; //= 32212254720;
+    remainSpace = await checkSpace('C:').then((diskSpace) => {
+        return diskSpace.free;
+    });
     let result = {
-        picAmount, userAmount, usedSpace: parseInt(usedSpace[0].count), remainSpace
+        picAmount, userAmount, usedSpace: parseInt(usedSpace[0].count), remainSpace,
+        onlineUsers: 0, userOnlineTime: 0, dailyAddUser: 0, dailyAddSpace: 0
     };
     ctx.body = result;
-});
-route.get("/log", async (ctx, next) => {
-    console.log(ctx.session.username);
 });
 //# sourceMappingURL=backendController.js.map
