@@ -7,11 +7,11 @@ const sequelize_1 = __importDefault(require("sequelize"));
 let sequelize = new sequelize_1.default.Sequelize({
     host: "localhost",
     dialect: "mysql",
-    database: "newbee_smart_album",
-    //database: "smart_album",
+    //database: "newbee_smart_album",
+    database: "smart_album",
     username: "root",
-    //password: "GYf51610532",
-    password: "chenliang",
+    password: "GYf51610532",
+    //password: "chenliang",
     define: {
         timestamps: false,
     }
