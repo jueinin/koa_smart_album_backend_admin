@@ -27,6 +27,11 @@ route.post('/login',async (ctx,next)=>{
     }
     return;
   }
+  if (ctx.session.username === 'root') {
+    ctx.body={
+      status: "already login"
+    }
+  }
   if (row.password === password) {
     ctx.session.username = username;
     ctx.body = {
@@ -35,7 +40,7 @@ route.post('/login',async (ctx,next)=>{
   } else {
     ctx.body={
       status: "err password"
-    }
+    };
   }
 })
 
@@ -50,7 +55,14 @@ interface GetInfo {
   dailyAddSpace: number;
 }
 route.get("/getInfo", async (ctx, next) => {   //图片总数量   //按照时间地点对图片分类 //总人数 在线人数
-  console.log(ctx.session);
+  console.log(ctx.session.username);
+  if (ctx.session.username !== 'root') {
+    ctx.response.status = 401;
+    ctx.body={
+      message: "not authed"
+    }
+    return;
+  }
   let picAmount = await tables.photo.count();
   let userAmount = await tables.user.count();
   //在线人数需要接口
@@ -61,7 +73,8 @@ route.get("/getInfo", async (ctx, next) => {   //图片总数量   //按照时�
   });
   //假设总容量30GB
   let remainSpace;//= 32212254720;
-  remainSpace =await checkSpace('/').then((diskSpace) => {
+  let path = os.platform() === 'win32' ? "C:" : "/";
+  remainSpace = await checkSpace(path).then((diskSpace) => {
     return diskSpace.free;
   });
   let result:GetInfo={

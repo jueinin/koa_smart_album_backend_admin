@@ -16,6 +16,7 @@ const dbtables = __importStar(require("../entities/db.tables"));
 ;
 const js_md5_1 = __importDefault(require("js-md5"));
 const sequelize_1 = require("sequelize");
+const os = __importStar(require("os"));
 const checkSpace = require("check-disk-space");
 let route = new koa_router_1.default({
     prefix: "/backendApi"
@@ -39,6 +40,11 @@ route.post('/login', async (ctx, next) => {
         };
         return;
     }
+    if (ctx.session.username === 'root') {
+        ctx.body = {
+            status: "already login"
+        };
+    }
     if (row.password === password) {
         ctx.session.username = username;
         ctx.body = {
@@ -52,7 +58,14 @@ route.post('/login', async (ctx, next) => {
     }
 });
 route.get("/getInfo", async (ctx, next) => {
-    console.log(ctx.session);
+    console.log(ctx.session.username);
+    if (ctx.session.username !== 'root') {
+        ctx.response.status = 401;
+        ctx.body = {
+            message: "not authed"
+        };
+        return;
+    }
     let picAmount = await tables.photo.count();
     let userAmount = await tables.user.count();
     //在线人数需要接口
@@ -63,7 +76,8 @@ route.get("/getInfo", async (ctx, next) => {
     });
     //假设总容量30GB
     let remainSpace; //= 32212254720;
-    remainSpace = await checkSpace('/').then((diskSpace) => {
+    let path = os.platform() === 'win32' ? "C:" : "/";
+    remainSpace = await checkSpace(path).then((diskSpace) => {
         return diskSpace.free;
     });
     let result = {
